@@ -1,8 +1,15 @@
 ---
 title: "Análise e visualização de dados espaciais com R"
-author: "Walter Humberto Subiza Piña"
-date: "`r format(Sys.Date())`"
-output: html_document
+author: "Curso-R Walter Humberto Subiza Piña"
+date: 2018-10-27
+categories: ["R"]
+tags: ["Análise espacial"]
+slug: "Análise espacial"
+minidesc: "Neste tutorial apresentaremos a análise espacial de dados georreferenciadosem R."
+desc: "Esta documentação, de caráter introdutório, tem como objetivo apresentar formas de tratar e visualizar os dados no _R_, considerando sua geometria e espacialidade, mostrando que é possível manipular e visualizar dados espaciais sem ter que, nesse processo, fazer o caminho do _R_ ao SIG e vice-versa várias vezes. Para isso serão apresentados dois pacotes específicos: `sf` e `raster`, além de alguns  para visualização. "
+requisitos: ["r-base", "ggplot2", "sf", "raster", "tmap", "ggmap", "dplyr"]
+layout: "article"
+ordem: 11
 ---
 
 ```{r setup, include=FALSE}
@@ -11,7 +18,9 @@ knitr::opts_chunk$set(echo      = TRUE,
                       message   = FALSE, 
                       fig.path  = paste0(getwd(), "/figuras/"), 
                       fig.ext   = 'png',
-                      fig.align = 'center')
+                      fig.align = 'center',
+                      collapse  = TRUE, 
+                      out.width = "75%")
 ```
 
 ```{r bibliotecas}
@@ -173,10 +182,7 @@ O objeto da figura é um arquivo multipolígono contendo 6 feições com três v
 
  Cada classe mencionada tem seus próprios metodos, para ver a lista completa deles, execute `methods(class = "sf")`. Experimente ver os métodos das outras duas classes, `sfc` e `sfg`.
 
- 
  </div>
-  
- <div style="text-align:center" markdown="1">
 
 ![Classe de objetos na feição simples](sf.png)
 
@@ -1612,7 +1618,7 @@ plot(ig_simples["ID"])
 
 ---
 
-#### 9. Análise espacial em dados matriciais
+#### 9. Análise espacial em dados matriciais ( _raster_)
 
 O pacote `raster` possui diversas funções para a leitura, manipulação e gravação de dados matriciais, algumas delas são (ver documentação do pacote):
 
