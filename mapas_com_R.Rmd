@@ -24,39 +24,7 @@ library(ggmap)
 ```
 
 
-### Indice
 
-#### 1. Introdução
-
-Objetivo: apresentar algumas formas de tratar e visualizar os dados georreferenciados no _R_.
-
-Conceito de **feição** ou **_simple feature_**. Apresentação de pacotes `sf`, `raster` e `sp`.
-
-#### 2. Objetos classe S-3 e S-4
-
-  a- Definição
-        
-  b- Representação e geometria vetorial
-  
-  + Dimensão e coordenadas
-      
-  + organização das feições simples no `sf`
-      
-  + Métodos para cada classe
-      
-  + Tipos de geometria
-
-  c- Dados matriciais ou raster
-  
-#### 3. Sistema Geodésico de Referência - SGR ( _CRS_)
-
- a- _CRS_ não projetado ou de coordenadas geográficas
-
- b- _CRS_ de coordenadas projetadas
-
-  Tabelas de SGR no Brasil
-  
-     Exercício identificação de SGR
 
 \
 ---
@@ -840,7 +808,7 @@ head(esper_sf, 2)
 Para verificar que o objeto agora tem o atributo espacial vamos fazer um gráfico simples.
 
 ```{r map21}
-plot(esper_sf["C2"], 
+plot(esper_sf["C1"], 
      main = "Dataframe transformado em objeto sf", 
      axes =T)
 ```
@@ -1840,4 +1808,19 @@ CREDITOS:
  
   + [EPSG](https://www.epsg-registry.org/) 
   
+  
+  + H. Wickham. ggplot2: Elegant Graphics for Data Analysis. Springer-Verlag New York, 2016.
+  Tennekes M (2018). “tmap: Thematic Maps in R.” _Journal of Statistical Software_, *84*(6), 1-39.
+doi: 10.18637/jss.v084.i06 (URL: http://doi.org/10.18637/jss.v084.i06).
+
+  +  D. Kahle and H. Wickham. ggmap: Spatial Visualization with ggplot2. The R Journal, 5(1),
+  144-161. URL http://journal.r-project.org/archive/2013-1/kahle-wickham.pdf
+  
+  + Tennekes M (2018). “tmap: Thematic Maps in R.” _Journal of
+Statistical Software_, *84*(6), 1-39. doi:
+10.18637/jss.v084.i06 (URL:
+http://doi.org/10.18637/jss.v084.i06).
+
+  + Fonte dos dados: o próprio autor do tutorial ou extraídos do portal IBGE: <https://www.ibge.gov.br/>
+
 ---
