@@ -1,0 +1,47 @@
+---
+title: "Untitled"
+author: "WHSP"
+date: "14 de dezembro de 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Integrando R com QGIS
+
+RQGIS: Integrating R with QGIS for Statistical Geocomputing <https://rjournal.github.io/archive/2017/RJ-2017-067/RJ-2017-067.pdf>
+
+
+### Introdução
+
+Se definimos um SIG como um sistema que captura, armazena, manipula, analiza, gerencia e apresenta dados geográficos ou espaciais (ou seja que tem um atributo que os relaciona com o espaço), poderiamos dizer, sem temor a errar que o _R_ como ecosistema de análise, tem se tornado um deles.
+
+Muitos pacotes contribuiram para iss0, fornecendo classes espaciais e algoritmos de análise (veja por exemplo, `maptools`, `raster`, `sp`, `rgeos`, `rgdal` e `sf`, dentre outros) ou ainda fornecendo conexão com SIG como _GRASS_ (`rArcInfo`, `rgrass7`). Apesar disso, _R_ ainda carecia de capacidade de processamento em muitas operações típicas dos SIG, como por exemplo calcular o índice de vegetação ou fazer uma classificação por curvatura. O que estava faltando era uma interfase que permitisse ao _R_ acessar a um dos mais usados SIG de código aberto em uso: o QGIS.
+
+**RQGIS** (para versões 2.X do QGIS) e **RQGIS3** (para 3.X) vem para oferecer essa facilidade e permitir executar operações típicas de SIG no ambiente _R_. O QGIS permite executar scripts em _R_ através da caixa de ferramentas, o que facilita o uso para as pessoas que não querem usá-lo diretamente, mas o acesso às capacidades do QGIS dentro do R tem a vantagem de tornar disponível outras ferramentas que o próprio QGIS tem, como SAGA, GRASS, TauDem, Lidar, etc.
+
+### Conceitos básicos do pacote
+
+  - **RQGIS** faz uso da API Python QGIS para acessar os módulos do QGIS
+  
+  - para conseguir o acesso em primeiro lugar define todas as variáveis de ambiente necessárias e depois estabelece a conexão com o Python, usando o pacote `reticulate`
+  
+  - **RQGIS** tem dois componentes principais: um código Python que define a classe Python "RQGIS", incluindo os seus métodos, e
+  
+  - um arquivo _R_ que estabelece a interfase com Python QGIS e permite executar o QGIS dentro do _R_.
+  
+  - As principais funções do **RQGIS** são:
+  
+    1- `open_app()`, que estabelece a conexão com Python QGIS
+    
+    2- `find_algoritms()`, para procurar as nomes dos geoalgoritmos;
+    
+    3- `get_args_man()`, para recuperar os parâmetros de processamento dos algoritmos, e
+    
+    4- `run_qgis()`, que chama os algoritmos presentes no QGIS e permite que objetos `sf`, `raster`e `sp` sejam argumentos no processamento e as saídas sejam carregadas no _R_.
+    
+    
+
+
