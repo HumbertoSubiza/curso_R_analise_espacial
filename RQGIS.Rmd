@@ -20,7 +20,9 @@ Se definimos um SIG como um sistema que captura, armazena, manipula, analiza, ge
 
 Muitos pacotes contribuiram para iss0, fornecendo classes espaciais e algoritmos de análise (veja por exemplo, `maptools`, `raster`, `sp`, `rgeos`, `rgdal` e `sf`, dentre outros) ou ainda fornecendo conexão com SIG como _GRASS_ (`rArcInfo`, `rgrass7`). Apesar disso, _R_ ainda carecia de capacidade de processamento em muitas operações típicas dos SIG, como por exemplo calcular o índice de vegetação ou fazer uma classificação por curvatura. O que estava faltando era uma interfase que permitisse ao _R_ acessar a um dos mais usados SIG de código aberto em uso: o QGIS.
 
-**RQGIS** (para versões 2.X do QGIS) e **RQGIS3** (para 3.X) vem para oferecer essa facilidade e permitir executar operações típicas de SIG no ambiente _R_. O QGIS permite executar scripts em _R_ através da caixa de ferramentas, o que facilita o uso para as pessoas que não querem usá-lo diretamente, mas o acesso às capacidades do QGIS dentro do R tem a vantagem de tornar disponível outras ferramentas que o próprio QGIS tem, como SAGA, GRASS, TauDem, Lidar, etc.
+**RQGIS** (para versões 2.X do QGIS) e **RQGIS3** (para 3.X) vem para oferecer essa facilidade e permitir executar operações típicas de SIG no ambiente _R_. Esclarecendo que ao dia de hoje, enquanto o pacote **RQGIS** esta disponivel no repositorio do CRAN, o **RQGIS3** tem de ser instalado a partir da pagina de um dos autores, em <https://github.com/jannes-m/RQGIS3>.Este documento se va a referir especificamente a la version 2 de QGIS, mas as funcoes e procedimentos sao identicos para a versao 3.
+
+O QGIS permite executar scripts em _R_ através da caixa de ferramentas, o que facilita o uso para as pessoas que não querem usá-lo diretamente, mas o acesso às capacidades do QGIS dentro do R tem a vantagem de tornar disponível outras ferramentas de SIG que o próprio QGIS tem, como SAGA, GRASS, TauDem, Lidar, etc.
 
 ### Conceitos básicos do pacote
 
@@ -43,5 +45,23 @@ Muitos pacotes contribuiram para iss0, fornecendo classes espaciais e algoritmos
     4- `run_qgis()`, que chama os algoritmos presentes no QGIS e permite que objetos `sf`, `raster`e `sp` sejam argumentos no processamento e as saídas sejam carregadas no _R_.
     
     
+### Uso do RQGIS
 
+Como o pacote e uma interfase entre o _R_ e o QGIS, vamos supor que este ja foi previamente instalado, senao faca a instalacao a partir do repositorio oficial do QGIS, escolhendo a versao do seu sistema operativo adequada e seguindo as instrucoes, veja <https://www.qgis.org/en/site/index.html>. Como dica, faca uma instalacao completa, que disponibilizara os complementos necessarios para trabalhar em SIG. 
+
+Como primeiro passo temos de carregar a biblioteca e definir as variaveis de ambiente. Neste caso na primeira tentativa nao achou a instalacao do QGIS, pelo que o caminho foi inserido manualmente
+
+```{r}
+library("RQGIS")
+# set_env()
+set_env("C:/Program Files/QGIS 2.18")
+```
+
+Encontradas as variaveis necessarias, vamos estabelecer a conexao com o QGIS, usando a funcao `open_app`. Esta funcao define todos os caminhos necessarios, abre o QGIS e importa os modulos Python que precisa.
+
+```{r}
+open_app()
+```
+
+As duas funcoes executadas anteriormente sao opcionais, no sentido de que sao necessarias como entrada para todas as funcoes que seguem e serao chamadas automaticamente caso nao ter sido executadas previamente.
 
