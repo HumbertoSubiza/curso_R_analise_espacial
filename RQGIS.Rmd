@@ -63,5 +63,37 @@ Encontradas as variaveis necessarias, vamos estabelecer a conexao com o QGIS, us
 open_app()
 ```
 
-As duas funcoes executadas anteriormente sao opcionais, no sentido de que sao necessarias como entrada para todas as funcoes que seguem e serao chamadas automaticamente caso nao ter sido executadas previamente.
+As duas funcoes executadas anteriormente (`set_env()` e `open_app()`) sao opcionais, no sentido de que sao necessarias como entrada para todas as funcoes que seguem e las serao chamadas automaticamente caso nao ter sido executadas previamente.
+
+---
+
+Para mostrar um exemplo de uso da biblioteca **RQGIS**, sera carregado um modelo digital de elevacoes (DEM) e calculado as curvaturas do terreno a partir dele. Neste exemplo o DEM pertence a propia biblioteca pelo que indicaremos apenas o caminho e sera carregado no momento da execucao do algoritmo.
+
+```{r}
+data("dem", package = "RQGIS")
+```
+
+Para localizar e definir parametros nos geoalgoritmos do QGIS, primeiro faremos uma busqueda usando expressoes regulares. A funcao `find_algoritms()` permite realizar a busqueda de todos os algoritmos presentes no QGIS, a opcao `names_only = TRUE` nos retorna apenas os nomes dos algoritmos sem a descricao de cada um deles.
+
+```{r}
+find_algorithms(search_term = "curvature",
+                name_only   = TRUE)
+```
+
+Na saida vemos que 3 funcoes de SAGA, 1 de GRASS e 1 de GRASS7 tem o termo "curvature" na descricao do algoritmo. Vamos usar o `"grass7:r.slope.aspect"`
+
+Escolhido um algortimo, podemos consultar a ajuda da mesma usando a funcao `open_help("grass7:r.slope.aspect")`.
+
+E conhecer em profundidade todos os parametros de processamento com a funcao `get_usage()`.
+
+```{r}
+get_usage("grass7:r.slope.aspect")
+```
+
+A recuperacao automatica dos parametros padrao de cada algoritmo e feita com `get_args_man()`, os mesmos podem ser armazenados para futuras mudancas.
+
+```{r}
+params <- get_args_man(alg = "grass7:r.slope.aspect", options = TRUE)
+params
+```
 
