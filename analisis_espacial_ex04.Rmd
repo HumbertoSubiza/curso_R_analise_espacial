@@ -1,0 +1,88 @@
+---
+title: ""
+author: "Walter Humberto Subiza Pina"
+date: "12 de junho de 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo      = TRUE,
+                      message   = FALSE,
+                      warning   = FALSE,
+                      fig.path  = paste0(getwd(), "/figuras/"), 
+                      fig.ext   = 'png',
+                      fig.align = 'center')
+```
+
+
+
+```{r libraries}
+library(sf)
+library(raster)
+library(tidyverse)
+```
+
+## Exercicio 04 de análise espacial (em construção!!)
+
+### Objetivo:
+
+Efetuar operações  de análise espacial com dados raster
+
+ Insumos:
+ 
+   - Arquivo com modelo de elevações da zona do município de Nova Iguaçú
+   
+   - Arquivo camada com duas áreas de APA do município de Nova Iguaçú 
+   
+---
+
+
+
+## Dados raster
+
+
+### MDEs
+
+```{r spatial_31}
+mde_ni <- raster("data/mde_nova_ig_class.tif")
+extension <- extent(640000,655000, 7470000, 7482000)
+mde_ni_crop <- crop(mde_ni, extension)
+crs(mde_ni) <- "+proj=utm +zone=23 +south +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"
+plot(mde_ni)
+```
+
+
+```{r spatial_32}
+apa_ni <- st_read("data/apa_ni.shp")
+apa_ni <- st_transform(apa_ni, crs=31983)
+head(apa_ni)
+
+plot(mde_ni_crop, reset = F)
+plot(st_geometry(apa_ni), add = T)
+```
+
+
+
+
+### mascara com polígonos
+
+```{r spatial_33}
+mde_masc <- mask(mde_ni, mask = apa_ni)
+plot(mde_masc)
+```
+
+#### extrair valores
+
+```{r spatial_34}
+altitudes_medias <- raster::extract(mde_ni, apa_ni, fun = mean)
+altitudes_medias
+```
+
+```{r spatial_35}
+# todas as altitudes
+alt_apa <- raster::extract(mde_ni, apa_ni)
+str(alt_apa)
+summary(alt_apa[[1]])
+summary(alt_apa[[2]])
+```
+
