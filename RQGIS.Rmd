@@ -6,7 +6,14 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo      = TRUE, 
+                      warning   = FALSE, 
+                      message   = FALSE, 
+                      fig.path  = paste0(getwd(), "/figuras/"), 
+                      fig.ext   = 'png',
+                      fig.align = 'center',
+                      collapse  = TRUE, 
+                      out.width = "75%")
 ```
 
 ## Integrando R com QGIS
@@ -57,7 +64,7 @@ library("RQGIS")
 set_env("C:/Program Files/QGIS 2.18")
 ```
 
-Encontradas as variaveis necessarias, vamos estabelecer a conexao com o QGIS, usando a funcao `open_app`. Esta funcao define todos os caminhos necessarios, abre o QGIS e importa os modulos Python que precisa.
+Encontradas as variaveis necessarias, vamos estabelecer a conexao com o QGIS, usando a funcao `open_app`. Esta funcao define todos os caminhos necessarios para a integracao, abre o QGIS e importa os modulos Python que precisa.
 
 ```{r}
 open_app()
@@ -67,33 +74,65 @@ As duas funcoes executadas anteriormente (`set_env()` e `open_app()`) sao opcion
 
 ---
 
-Para mostrar um exemplo de uso da biblioteca **RQGIS**, sera carregado um modelo digital de elevacoes (DEM) e calculado as curvaturas do terreno a partir dele. Neste exemplo o DEM pertence a propia biblioteca pelo que indicaremos apenas o caminho e sera carregado no momento da execucao do algoritmo.
+Para mostrar um exemplo de uso da biblioteca **RQGIS**, sera carregado um modelo digital de elevacoes (DEM) e calculado as curvaturas do terreno a partir dele. Neste exemplo o DEM pertence a propia biblioteca **RQGIS**, pelo que indicaremos apenas o caminho e sera carregado no momento da execucao do algoritmo.
 
 ```{r}
 data("dem", package = "RQGIS")
 ```
 
-Para localizar e definir parametros nos geoalgoritmos do QGIS, primeiro faremos uma busqueda usando expressoes regulares. A funcao `find_algoritms()` permite realizar a busqueda de todos os algoritmos presentes no QGIS, a opcao `names_only = TRUE` nos retorna apenas os nomes dos algoritmos sem a descricao de cada um deles.
+Para localizar geoalgoritmos no QGIS, primeiro faremos uma busqueda usando expressoes regulares que contenham palavras chaves referentes ao algoritmo desejado. A funcao `find_algoritms()` permite realizar a busqueda de todos os algoritmos presentes no QGIS, a opcao `names_only = TRUE` nos retorna apenas os nomes dos algoritmos sem a descricao de cada um deles.
 
 ```{r}
 find_algorithms(search_term = "curvature",
                 name_only   = TRUE)
 ```
 
-Na saida vemos que 3 funcoes de SAGA, 1 de GRASS e 1 de GRASS7 tem o termo "curvature" na descricao do algoritmo. Vamos usar o `"grass7:r.slope.aspect"`
+Na saida vemos que 3 funcoes de SAGA, 1 de GRASS e 1 de GRASS7 tem o termo "curvature" na descricao do algoritmo. Escolhemos usar o `"grass7:r.slope.aspect"`
 
-Escolhido um algortimo, podemos consultar a ajuda da mesma usando a funcao `open_help("grass7:r.slope.aspect")`.
+Podemos consultar a ajuda do geoalgoritmo usando a funcao `open_help("grass7:r.slope.aspect")`, o que nao sera feito neste tutorial
 
-E conhecer em profundidade todos os parametros de processamento com a funcao `get_usage()`.
+E conhecer em profundidade todos os parametros de processamento com a funcao `get_usage()` (17 para este algoritmo).
 
 ```{r}
 get_usage("grass7:r.slope.aspect")
 ```
 
-A recuperacao automatica dos parametros padrao de cada algoritmo e feita com `get_args_man()`, os mesmos podem ser armazenados para futuras mudancas.
+A recuperacao automatica dos parametros padrao de cada algoritmo e feita com `get_args_man()`, eh recomendavel salvar eles para futuras mudancas ou experimentar os efeitos de variacoes nos mesmos.
 
 ```{r}
 params <- get_args_man(alg = "grass7:r.slope.aspect", options = TRUE)
 params
+```
+
+Na sequencia especificamos os argumentos necessarios. A entrada deste algoritmo deve ser um DEM, mas `run_qgis()` acepta tambem objetos espaciais armazenados em disco ou no ambiente _R_ do tipo `raster`, `sp` ou `sf`. Note que as saidas do algoritmo sao do tipo temporario, mas pode ser modificado indicando o caminho e nome da saida desejada. No caso do arquivo estar armazenado em disco, eh mais eficiente apenas indicar o caminho ate ele, em vez de carrega-lo em memoria. Neste exemplo vamos salvar apenas as saidas especificas de `pcurvature` e `tcurvature`, deixando as outras derivadas como saidas temporarias (`dx`, `dy`, `dxx`, etc.). O parametro de `run_qgis()`, `show_outputs_paths = TRUE` lanca na tela todas as saidas e `load_outputs()` carrega as saidas cujos caminhos foram especificados diretamente do QGIS no ambiente _R_.
+
+```{r}
+# modificacao dos parametros de processamento
+params$elevation <- dem
+params$pcurvature <-  file.path(tempdir(), "pcurv.tif")
+params$tcurvature <-  file.path(tempdir(), "tcurv.tif")
+
+# processamento
+saida <- run_qgis(alg = "grass7:r.slope.aspect",
+                  params      = params,
+                  load_output = TRUE,
+                  show_output_paths = FALSE)
+```
+
+As modficacoes feitas nos parametros podem tambem ser introduzidas no algoritmo no momento do processamento, sendo que devemos colocar ou uma lista com os argumentos, como feito no anterior fragmento de codigo ou apenas os argumentos modificados, **mas nao ambas formas juntas**.
+
+A funcao `run_qgis()` retorna uma lista com dois objetos `raster` (`pcurv.tif` e `tcurv.tif`), se a saida for apenas um objeto `raster` sera da classe `RasterLayer`, se for uma saida vetorial sera um objeto `sf`.
+
+O gerenciamento dos parametros, `run_qgis()` usa `get_args_man()` com `pass_arg()` por tras para pegar os parametros padrao do algoritmo, consulte a ajuda para maiores detalhes sobre a checagem dos parametros por parte desta ultima funcao.
+
+A visualizacao da saida pode ser com auxilio das bibliotecas `raster` ou `sf`.
+
+```{r}
+library(raster)
+plot(saida[[1]], main = "pcurvature de dem")
+```
+
+```{r fig.width=11}
+plot(stack(saida))
 ```
 
